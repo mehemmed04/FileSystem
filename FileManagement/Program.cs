@@ -107,11 +107,12 @@ namespace ConsoleApp2
 
         class DISC
         {
-            List<IFile> Files;
+            public List<IFile> Files;
         }
 
         class Controller
         {
+            DISC disc = new DISC();
             public enum FileTypes { PDF = 1, TXT = 2, EXCEL = 3 };
             public void Start()
             {
@@ -154,6 +155,7 @@ namespace ConsoleApp2
                             Console.WriteLine($"content : {content}");
                         }
                     }
+                    //Write Section
                     else if (select == 2)
                     {
                         Console.WriteLine("PDF    [1]");
@@ -170,6 +172,7 @@ namespace ConsoleApp2
                             PDFFile pdffile = new PDFFile();
                             pdffile.Write(filename, content);
                             Console.WriteLine("Writed Succesfully");
+                            disc.Files.Add(pdffile);
                         }
                         else if (select == (int)FileTypes.TXT)
                         {
@@ -180,6 +183,8 @@ namespace ConsoleApp2
                             TXTFile txtfile = new TXTFile();
                             txtfile.Write(filename, content);
                             Console.WriteLine("Writed Succesfully");
+                            disc.Files.Add(txtfile);
+
                         }
                         else if (select == (int)FileTypes.EXCEL)
                         {
@@ -190,6 +195,7 @@ namespace ConsoleApp2
                             ExcelFile xlsfile = new ExcelFile();
                             xlsfile.Write(filename, content);
                             Console.WriteLine("Writed Succesfully");
+                            disc.Files.Add(xlsfile);
                         }
                     }
                     else
