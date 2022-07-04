@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using ClosedXML.Excel;
+
+
 namespace ConsoleApp2
 {
 
@@ -64,61 +67,43 @@ namespace ConsoleApp2
     }
     class ExcelFile : IFile
     {
-
-        public DataTable GetDataTable(string sql, string connectionString)
-        {
-            DataTable dt = null;
-
-            using (OleDbConnection conn = new OleDbConnection(connectionString))
-            {
-                conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
-                {
-                    using (OleDbDataReader rdr = cmd.ExecuteReader())
-                    {
-                        dt.Load(rdr);
-                        return dt;
-                    }
-                }
-            }
-        }
-
         public string Read(string FileName)
         {
-            //https://www.c-sharpcorner.com/UploadFile/ae35ca/read-and-write-excel-data-using-C-Sharp/
-            string Path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/" + FileName + ".xls";
-            string content ="";
-            string connString = string.Format("Provider=Microsoft.Jet.OleDb.4.0;Data Source={0};Extended Properties='Excel 12.0;HDR=yes'", Path);
-            DataTable dt = GetDataTable("SELECT * from [EmpTable]", connString);
-
-            foreach (DataRow dr in dt.Rows)
-            {
-                content += dr.ToString();
-            }
-            return content;
+            string Path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/" + FileName + ".xlsx";
+            var wbook = new XLWorkbook(Path);
+            var ws1 = wbook.Worksheet(1);
+            var data = ws1.Cell("A1").GetValue<string>();
+            return data;
         }
 
         public void Write(string FileName, string Content)
         {
-            string Path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/" + FileName + ".xls";
-            string connectionString = $"Provider=Microsoft.Jet.OleDb.4.0; Data Source={Path}; Extended Properties=Excel 8.0;";
+            string Path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/" + FileName + ".xlsx";
+            var wbook = new XLWorkbook();
 
-            using (OleDbConnection Connection = new OleDbConnection(connectionString))
-            {
-                Connection.Open();
-                using (OleDbCommand command = new OleDbCommand())
-                {
-                    command.Connection = Connection;
-                    command.CommandText = $"CREATE TABLE [EmpTable]({Content} Char({Content.Length}))";
-                    command.ExecuteNonQuery();
-                }
-            }
+            var ws = wbook.Worksheets.Add("Sheet1");
+            ws.Cell("A1").Value = Content;
+
+            wbook.SaveAs(Path);
         }
 
-        string IFile.Read(string Path)
-        {
-            throw new NotImplementedException();
-        }
+        //public void Write(string FileName, string Content)
+        //{
+        //    string Path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/" + FileName + ".xls";
+        //    string connectionString = $"Provider=Microsoft.Jet.OleDb.4.0; Data Source={Path}; Extended Properties=Excel 8.0;";
+
+        //    using (OleDbConnection Connection = new OleDbConnection(connectionString))
+        //    {
+        //        Connection.Open();
+        //        using (OleDbCommand command = new OleDbCommand())
+        //        {
+        //            command.Connection = Connection;
+        //            command.CommandText = $"CREATE TABLE [EmpTable]({Content} Char({Content.Length}))";
+        //            command.ExecuteNonQuery();
+        //        }
+        //    }
+        //}
+
 
         class DISC
         {
@@ -165,7 +150,8 @@ namespace ConsoleApp2
                             Console.WriteLine("Enter File name : ");
                             string filename = Console.ReadLine();
                             ExcelFile xlsfile = new ExcelFile();
-                            xlsfile.Read(filename);
+                            string content = xlsfile.Read(filename);
+                            Console.WriteLine($"content : {content}");
                         }
                     }
                     else if (select == 2)
