@@ -172,7 +172,6 @@ namespace ConsoleApp2
                             PDFFile pdffile = new PDFFile();
                             pdffile.Write(filename, content);
                             Console.WriteLine("Writed Succesfully");
-                            disc.Files.Add(pdffile);
                         }
                         else if (select == (int)FileTypes.TXT)
                         {
@@ -183,7 +182,6 @@ namespace ConsoleApp2
                             TXTFile txtfile = new TXTFile();
                             txtfile.Write(filename, content);
                             Console.WriteLine("Writed Succesfully");
-                            disc.Files.Add(txtfile);
 
                         }
                         else if (select == (int)FileTypes.EXCEL)
@@ -195,7 +193,6 @@ namespace ConsoleApp2
                             ExcelFile xlsfile = new ExcelFile();
                             xlsfile.Write(filename, content);
                             Console.WriteLine("Writed Succesfully");
-                            disc.Files.Add(xlsfile);
                         }
                     }
                     else
